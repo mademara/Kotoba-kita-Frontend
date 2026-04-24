@@ -25,7 +25,7 @@ export function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Navigate to="/beranda" replace />} />
+          <Route index element={<Navigate to="/home" replace />} />
           <Route path="home" element={<HomePage />} />
           <Route path="decks" element={<DeckListPage />} />
           <Route path="decks/:deckId" element={<DeckDetailPage />} />
