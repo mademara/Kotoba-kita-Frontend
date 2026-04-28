@@ -329,3 +329,38 @@ button {
   padding: 1rem;
 }
 
+/* notfound page */
+
+.not-found-page {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  padding: 5rem;
+  gap: 5rem;
+}
+.not-found-page-pict img {
+  max-width: 30rem;
+  border-radius: var(--radius-md);
+}
+.not-found-page-teks h1 {
+  font-size: 1rem;
+  color: var(--primary);
+  font-weight: 900;
+  background-color: var(--surface-low);
+  max-width: fit-content;
+  padding: 0.5rem;
+  border-radius: var(--radius-xl);
+}
+.not-found-page-teks h2 {
+  font-size: 4rem;
+  color: var(--primary);
+  font-weight: 900;
+}
+.not-found-page-teks p {
+  color: var(--secondary);
+  font-weight: 100;
+}
+.not-found-page-back-to-home {
+  font-weight: 900;
+  color: var(--on-secondary-container);
+}
