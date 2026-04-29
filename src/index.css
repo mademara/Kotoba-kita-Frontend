@@ -216,3 +216,116 @@ button {
 .sidebar-logout-btn:active {
   background-color: var(--on-error-container);
 }
+
+/* .auth-page (login dan register) */
+.auth-page {
+  display: flex;
+  min-height: 100vh;
+  cursor: loa;
+}
+.auth-page-jumbotron {
+  flex: 1;
+  background-image: url('./assets/authBg.webp');
+  background-size: cover;
+  background-position: left;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.auth-page-jumbotron-bg-kanji {
+  display: flex;
+  align-items: flex-start;
+  position: absolute;
+  font-family: var(--font-japanese);
+  flex: 1;
+  height: 100vh;
+  font-size: 20rem;
+  opacity: 0.08;
+  color: var(--background);
+  pointer-events: none;
+}
+.auth-page-jumbotron-bg-kanji-2 {
+  align-self: flex-end;
+}
+
+.auth-page-jumbotron-teks {
+  flex: 1;
+  color: var(--surface);
+  text-align: center;
+}
+.auth-page-jumbotron-teks h3 {
+  font-weight: 100;
+  font-family: var(--font-body);
+}
+
+.auth-page-jumbotron-teks h1 {
+  font-size: 3rem;
+}
+.auth-page-form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1rem;
+}
+.auth-page-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.password-label {
+  display: flex;
+  justify-content: space-between;
+}
+.auth-page-form label {
+  font-weight: bold;
+}
+.auth-page-form input {
+  border: 1px var(--outline) solid;
+  border-radius: var(--radius-md);
+  min-height: 2.5rem;
+  padding: 8px;
+}
+.auth-page-button {
+  background-color: var(--primary-container);
+  margin-top: auto;
+  min-width: 100%;
+  padding: 0.8rem;
+  border-radius: var(--radius-full);
+  align-self: center;
+  color: var(--background);
+  transition: transform 0.2s;
+  font-weight: bold;
+}
+.auth-page-button:disabled {
+  background-color: var(--on-surface-variant);
+  cursor: wait;
+}
+.auth-page-button:active {
+  transform: scale(0.98);
+}
+.auth-page-to-register {
+  text-align: center;
+}
+.auth-page-to-register-link {
+  font-weight: bold;
+  color: var(--primary);
+}
+.auth-error-message {
+  color: var(--error);
+  background-color: var(--error-container);
+  border-radius: var(--radius-md);
+  padding: 0.3rem;
+}
+.auth-account-created {
+  color: var(--primary);
+  background-color: var(--surface-low);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
