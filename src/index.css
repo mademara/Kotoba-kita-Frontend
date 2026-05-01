@@ -122,7 +122,7 @@ button {
 }
 .dashboard-footer-lisense {
   margin-top: auto;
-  background-color: var(--surface);
+  background-color: var(--surface-container);
   border-top: 2px solid var(--surface-container);
   padding: 0.5rem;
 }
