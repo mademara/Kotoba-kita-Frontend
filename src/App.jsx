@@ -10,6 +10,8 @@ import { StudyPage } from './pages/StudyPage';
 import { DictionaryPage } from './pages/DictionaryPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import StudyDeckChoicePage from './pages/StudyDeckChoicePage';
+import StudyResultPage from './pages/StudyResultPage';
 
 export function App() {
   return (
@@ -29,7 +31,9 @@ export function App() {
           <Route path="home" element={<HomePage />} />
           <Route path="decks" element={<DeckListPage />} />
           <Route path="decks/:deckId" element={<DeckDetailPage />} />
-          <Route path="study" element={<StudyPage />} />
+          <Route path="study" element={<StudyDeckChoicePage />} />
+          <Route path="study/:deckId" element={<StudyPage />} />
+          <Route path="study/result" element={<StudyResultPage />} />
           <Route path="dictionary" element={<DictionaryPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Route>
