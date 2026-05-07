@@ -1,16 +1,12 @@
 import React from 'react';
 import { FooterLicense } from '../components/FooterLicense';
-import { mockDecks, deckWords } from '../mock/mockData';
-import { Navigate, NavLink, useParams } from 'react-router';
+import { deckWords } from '../mock/mockData';
+import { NavLink } from 'react-router';
 import { formatIndonesianDate } from '../helper/formatIndonesianDate';
 
-export function DeckDetailPage() {
-  const params = useParams();
-  const deck = mockDecks.find((deck) => deck.id === Number(params.deckId));
+export function DeckDetailPage({ deck }) {
   const wordsInDeck = deckWords(deck);
-  if (!deck) {
-    return <Navigate to="/404" replace />;
-  }
+
   return (
     <article className="deck-detail-page">
       <header className="deck-detail-container">
