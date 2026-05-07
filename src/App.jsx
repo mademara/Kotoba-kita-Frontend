@@ -12,6 +12,8 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import StudyDeckChoicePage from './pages/StudyDeckChoicePage';
 import StudyResultPage from './pages/StudyResultPage';
+import DeckEditPage from './pages/DeckEditPage';
+import DeckCreatePage from './pages/DeckCreatePage';
 
 export function App() {
   return (
@@ -19,6 +21,7 @@ export function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
         <Route
           path="/"
           element={
@@ -29,14 +32,23 @@ export function App() {
         >
           <Route index element={<Navigate to="/home" replace />} />
           <Route path="home" element={<HomePage />} />
-          <Route path="decks" element={<DeckListPage />} />
-          <Route path="decks/:deckId" element={<DeckDetailPage />} />
-          <Route path="study" element={<StudyDeckChoicePage />} />
-          <Route path="study/:deckId" element={<StudyPage />} />
-          <Route path="study/result" element={<StudyResultPage />} />
+
+          <Route path="decks">
+            <Route index element={<DeckListPage />} />
+            <Route path="create" element={<DeckCreatePage />} />
+            <Route path=":deckId" element={<DeckDetailPage />} />
+            <Route path=":deckId/edit" element={<DeckEditPage />} />
+          </Route>
+
+          <Route path="study">
+            <Route index element={<StudyDeckChoicePage />} />
+            <Route path="result" element={<StudyResultPage />} />
+            <Route path=":deckId" element={<StudyPage />} />
+          </Route>
+
           <Route path="dictionary" element={<DictionaryPage />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
         </Route>
+
         <Route path="/404" element={<NotFoundPage />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
