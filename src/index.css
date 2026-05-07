@@ -869,7 +869,7 @@ button {
 }
 .deck-choice {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   justify-content: center;
   gap: 1rem;
 }
@@ -923,7 +923,7 @@ button {
 }
 .result-page-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   justify-content: center;
 
   padding: 1rem;
@@ -988,7 +988,7 @@ button {
 
 .deck-list-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.288);
   padding: 1rem;
   gap: 1rem;
@@ -1345,4 +1345,128 @@ button {
 }
 .confirm-dialog-button-edit:active {
   transform: scale(80%);
+}
+
+/* dictionary-page */
+.dict-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.searchbar-input-word-list {
+  border-radius: var(--radius-full);
+  padding: 0px 1rem;
+  min-width: 30%;
+  border: 1px solid var(--outline-variant);
+  margin-left: auto;
+}
+.searchbar-input-word-list::-webkit-search-cancel-button {
+  cursor: pointer;
+  filter: grayscale(1) brightness(0.5);
+}
+.dict-page-words-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.288);
+  padding: 1rem;
+  gap: 1rem;
+  border-radius: var(--radius-lg);
+  background-color: var(--outline-variant);
+  contain: layout;
+  background-image:
+    radial-gradient(circle at 30% -20%, var(--background) 10%, transparent 70%),
+    radial-gradient(circle at 1% 100%, var(--background) 0%, transparent 10%);
+}
+.word-flip-card {
+  perspective: 1000px;
+  width: 1fr;
+  height: 300px;
+}
+
+.word-flip-card-inner {
+  transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--card-shadow2);
+  will-change: transform;
+  transform: translateZ(0);
+  border-radius: var(--radius-lg);
+}
+
+/* Efek saat kartu di-hover */
+.word-flip-card:hover .word-flip-card-inner {
+  transform: rotateY(180deg) translateZ(0);
+}
+
+.word-flip-card-front,
+.word-flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-lg);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+.word-flip-card-front {
+  background-color: var(--primary-container);
+  border: solid 1px var(--outline);
+  background-image:
+    radial-gradient(
+      circle at -20% 70%,
+      var(--darker-primary) 10%,
+      transparent 70%
+    ),
+    radial-gradient(
+      circle at 120% 30%,
+      var(--darker-primary) 10%,
+      transparent 70%
+    );
+
+  display: flex;
+  color: var(--deeper-white);
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1cqw;
+  border-radius: var(--radius-lg);
+}
+.word-flip-card-japanese {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font-japanese);
+}
+.word-flip-card-japanese h3 {
+  font-size: clamp(12px, 4vw, 24px);
+}
+.word-flip-card-japanese p {
+  font-size: clamp(6px, 2vw, 12px);
+}
+.word-flip-card-meaning {
+  font-size: clamp(12px, 4vw, 24px);
+}
+.word-flip-card-back {
+  transform: rotateY(180deg);
+  background-clip: padding-box;
+  background-color: var(--deeper-white);
+  border: solid 1px var(--outline);
+  background-image:
+    radial-gradient(circle at -20% 70%, var(--background) 10%, transparent 70%),
+    radial-gradient(circle at 120% 30%, var(--background) 10%, transparent 70%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1cqw;
+  border-radius: var(--radius-lg);
+}
+
+.word-flip-card-indonesian {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: auto;
 }
