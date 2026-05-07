@@ -58,20 +58,20 @@ export function HomePage() {
       </section>
       <figure className="flip-card">
         <div className="flip-card-inner">
-          <div class="flip-card-front">
-            <div class="quote-overlay">
-              <p class="quote-text">
-                "Waktu terbaik untuk mengulas Kanji adalah saat Kamu hampir
-                melupakannya."
+          <div className="flip-card-front">
+            <div className="quote-overlay">
+              <p className="quote-text">
+                &quot;Waktu terbaik untuk mengulas Kanji adalah saat Kamu hampir
+                melupakannya.&quot;
               </p>
             </div>
           </div>
 
-          <div class="flip-card-back">
-            <div class="quote-overlay">
-              <p class="quote-text">
-                "Sedikit demi sedikit, coretan rumit akan menetap di ingatan
-                jangka panjang."
+          <div className="flip-card-back">
+            <div className="quote-overlay">
+              <p className="quote-text">
+                &quot;Sedikit demi sedikit, coretan rumit akan menetap di
+                ingatan jangka panjang.&quot;
               </p>
             </div>
           </div>
