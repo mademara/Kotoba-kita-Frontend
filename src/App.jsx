@@ -14,6 +14,7 @@ import StudyDeckChoicePage from './pages/StudyDeckChoicePage';
 import StudyResultPage from './pages/StudyResultPage';
 import DeckEditPage from './pages/DeckEditPage';
 import DeckCreatePage from './pages/DeckCreatePage';
+import ProtectedNonDeck from './components/ProtectedNonDeck';
 
 export function App() {
   return (
@@ -36,14 +37,28 @@ export function App() {
           <Route path="decks">
             <Route index element={<DeckListPage />} />
             <Route path="create" element={<DeckCreatePage />} />
-            <Route path=":deckId" element={<DeckDetailPage />} />
+            <Route
+              path=":deckId"
+              element={
+                <ProtectedNonDeck>
+                  <DeckDetailPage />
+                </ProtectedNonDeck>
+              }
+            />
             <Route path=":deckId/edit" element={<DeckEditPage />} />
           </Route>
 
           <Route path="study">
             <Route index element={<StudyDeckChoicePage />} />
             <Route path="result" element={<StudyResultPage />} />
-            <Route path=":deckId" element={<StudyPage />} />
+            <Route
+              path=":deckId"
+              element={
+                <ProtectedNonDeck>
+                  <StudyPage />
+                </ProtectedNonDeck>
+              }
+            />
           </Route>
 
           <Route path="dictionary" element={<DictionaryPage />} />

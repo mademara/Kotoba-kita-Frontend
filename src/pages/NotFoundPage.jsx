@@ -1,5 +1,4 @@
 import React from 'react';
-import { AuthPageJumbotron } from '../components/AuthPageJumbotron';
 import { Link } from 'react-router';
 import pict404 from '../assets/404pict.webp';
 

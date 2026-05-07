@@ -8,6 +8,9 @@ export default function StudyDeckChoicePage() {
   const handleChoiceDeck = (deckId) => {
     navigate(`/study/${deckId}`);
   };
+  const handleShowDeckDetail = (deckId) => {
+    navigate(`/decks/${deckId}`);
+  };
 
   return (
     <article className="deck-choice-page">
@@ -22,7 +25,9 @@ export default function StudyDeckChoicePage() {
               <button onClick={() => handleChoiceDeck(deck.id)}>
                 Pakai Deck ini!
               </button>
-              <button>Lihat Detail Deck</button>
+              <button onClick={() => handleShowDeckDetail(deck.id)}>
+                Lihat Detail Deck
+              </button>
             </div>
           </div>
         ))}
