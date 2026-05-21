@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { AuthPageJumbotron } from '../components/AuthPageJumbotron';
 import { Link, useLocation, useNavigate } from 'react-router';
+import { useAuth } from '../contexts/AuthContext';
 
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const location = useLocation();
+  const [email, setEmail] = useState(
+    location.state ? location.state.email : ''
+  );
   const accountCreatedMsg = location.state?.message;
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const navigate = useNavigate();
 
@@ -29,32 +33,12 @@ export function LoginPage() {
       return;
     }
     setIsLoading(true);
-    //aku make fetch boongan untuk kebutuhan loading animations, nanti implement rill nya
     try {
-      const response = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            status: 201,
-            data: {
-              access: 'token jewete',
-              refresh: 'refresh jewete',
-              user: {
-                username: 'kotoba user',
-                email: 'koto@user.com',
-              },
-            },
-          });
-        }, 5000);
-      });
-      const token = response.data.access;
-      const tokenRefresh = response.data.refresh;
-      localStorage.setItem('token', token);
-      localStorage.setItem('refresh', tokenRefresh);
-      setEmail('');
-      setPassword('');
+      await login(email, password);
+
       navigate('/home');
     } catch (error) {
-      setErrorMessage('Terjadi kesalahan');
+      setErrorMessage(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -71,6 +55,7 @@ export function LoginPage() {
         <form onSubmit={handleLogin} className="auth-page-form">
           <label htmlFor="email-input">Email</label>
           <input
+            autoComplete="email"
             disabled={isLoading}
             required
             value={email}
@@ -95,6 +80,7 @@ export function LoginPage() {
             </button>
           </div>
           <input
+            autoComplete="current-password"
             disabled={isLoading}
             required
             value={password}

@@ -1,61 +1,75 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
 import { FooterLicense } from '../components/FooterLicense';
+import useStats from '../hooks/getStats';
+import LoadingPage from './LoadingPage';
+import { useAuth } from '../contexts/AuthContext';
+import HomeCard from '../components/HomeCard';
 export function HomePage() {
+  const {
+    errorMessage,
+    loading,
+    upcoming,
+    nextDueMinutes,
+    dueTodayCount,
+    retentionRate,
+    stabilityDays,
+    n5Progress,
+  } = useStats();
   const navigate = useNavigate();
   const handleStartStudySessions = () => {
     navigate('/study');
   };
-  const handleStartDrillSessions = () => {
-    navigate('/study');
-  };
+
+  if (loading) {
+    return <LoadingPage />;
+  }
+  if (errorMessage) {
+    return <h2>{errorMessage}</h2>;
+  }
   return (
     <article className="home-page">
       <section className="home-page-statistics">
         <div className="home-page-retention-rate">
           <h2>Daya Ingat</h2>
-          <p className="home-page-statistics-numbers">80%</p>
+          <p className="home-page-statistics-numbers">{retentionRate}%</p>
           <p className="home-page-statistics-explain">
-            Dari semua kartu yang telah Kamu ulas, 91% berhasil Kamu jawab
-            dengan benar
+            Dari semua kartu yang telah Kamu ulas, {retentionRate}% berhasil
+            Kamu jawab dengan benar
           </p>
         </div>
         <div className="home-page-stability">
           <h2>Ketahanan Ingatan</h2>
-          <p className="home-page-statistics-numbers">12 hari</p>
+          <p className="home-page-statistics-numbers">{stabilityDays} hari</p>
           <p className="home-page-statistics-explain">
-            Rata-rata kata yang Kamu hafal saat ini bisa bertahan selama 12 hari
-            sebelum kamu berpeluang melupakannya
+            Rata-rata kata yang Kamu hafal saat ini bisa bertahan selama{' '}
+            {stabilityDays} hari sebelum kamu berpeluang melupakannya
           </p>
         </div>
         <div className="home-page-progress">
           <h2>Progres Kosakata N5</h2>
-          <p className="home-page-statistics-numbers">40%</p>
+          <p className="home-page-statistics-numbers">{n5Progress}%</p>
           <p className="home-page-statistics-explain">
-            Saat ini, Kamu menguasai 40% dari daftar Kata N5 yang kami sediakan
+            Saat ini, Kamu menguasai {n5Progress}% dari daftar Kata N5 yang kami
+            sediakan
           </p>
         </div>
         <div className="home-page-streak">
           <h2>Streak</h2>
-          <p className="home-page-statistics-numbers">5 Hari 🔥</p>
-          <p className="home-page-statistics-explain">Yolooo 🚀</p>
+          <p className="home-page-statistics-numbers">- Hari 🔥</p>
+          <p className="home-page-statistics-explain">
+            Sistem Streak akan segera hadir 🚀
+          </p>
         </div>
       </section>
-      <section className="home-page-startsessions">
-        <h3>
-          Mantap! Semua hafalan sudah aman. Sesi berikutnya dalam 3 jam lagi ya!
-        </h3>
-        <p>
-          Kamu tetap bisa melakukan sesi belajar kok, tapi hasilnya tidak
-          dicatat di statistik ya
-        </p>
-        <button
-          onClick={handleStartStudySessions}
-          className="home-page-start-button"
-        >
-          Mulai sesi →
-        </button>
-      </section>
+      <HomeCard
+        nextDueMinutes={nextDueMinutes}
+        dueTodayCount={dueTodayCount}
+        retentionRate={retentionRate}
+        stabilityDays={stabilityDays}
+        n5Progress={n5Progress}
+        handleStartStudySessions={handleStartStudySessions}
+      />
       <figure className="flip-card">
         <div className="flip-card-inner">
           <div className="flip-card-front">
@@ -80,48 +94,17 @@ export function HomePage() {
       <section className="home-page-upcoming-sessions">
         <h2>Daftar sesi selanjutnya:</h2>
         <ul className="home-page-upcoming-sessions-list">
-          <li>
-            <p>2 kata Dalam 5 menit lagi</p>
-          </li>
-          <li>
-            <p>12 kata Dalam 15 menit lagi</p>
-          </li>
-          <li>
-            <p>22 kata Dalam 1 jam lagi</p>
-          </li>
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>{' '}
-          <li>
-            <p>20 kata Dalam 1 hari lagi</p>
-          </li>
+          {upcoming.length !== 0 ? (
+            upcoming.map(({ date, count }, i) => (
+              <li key={i}>
+                <p>{`${count} kata, pada ${date}`}</p>
+              </li>
+            ))
+          ) : (
+            <li>
+              <p>Tidak ada Jadwal sesi berikutnya</p>
+            </li>
+          )}
         </ul>
       </section>
       <FooterLicense />

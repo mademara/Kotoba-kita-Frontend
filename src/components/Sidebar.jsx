@@ -1,8 +1,11 @@
 import { NavLink, useNavigate } from 'react-router';
+import { useAuth } from '../contexts/AuthContext';
 
 export function Sidebar() {
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     navigate('/login');
   };
 
@@ -35,7 +38,8 @@ export function Sidebar() {
       </nav>
 
       <footer className="sidebar-footer">
-        <h3>Username</h3>
+        <h3>{user.username}</h3>
+        <p>{user.email}</p>
         <button onClick={handleLogout} className="sidebar-logout-btn">
           Keluar<span className="material-symbols-outlined">logout</span>
         </button>
