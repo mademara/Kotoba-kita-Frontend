@@ -661,10 +661,11 @@ button {
   color: var(--background);
 }
 .study-page-progress-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(1rem, 1fr));
   padding: 1rem;
   color: var(--darker-primary);
-  gap: 2px;
+  gap: 1rem;
 }
 .study-page-bar {
   max-height: 1rem;
@@ -956,6 +957,20 @@ button {
   align-items: center;
   border-radius: var(--radius-lg);
   box-shadow: var(--card-shadow2);
+}
+.result-summary {
+  display: flex;
+  background-color: var(--primary-container);
+  justify-content: space-around;
+  padding: 0.5rem;
+  border-radius: var(--radius-lg);
+}
+.result-summary div {
+  text-align: center;
+  background-color: var(--background);
+  padding: 0.5rem;
+  min-width: 200px;
+  border-radius: var(--radius-md);
 }
 
 /* deck list page */

@@ -16,6 +16,7 @@ import DeckEditPage from './pages/DeckEditPage';
 import DeckCreatePage from './pages/DeckCreatePage';
 import ProtectedNonDeck from './components/ProtectedNonDeck';
 import { AuthProvider } from './contexts/AuthContext';
+import ProtectedNonDeckStudy from './components/ProtectedNonDeckStudy';
 
 export function App() {
   return (
@@ -56,9 +57,9 @@ export function App() {
               <Route
                 path=":deckId"
                 element={
-                  <ProtectedNonDeck>
+                  <ProtectedNonDeckStudy>
                     <StudyPage />
-                  </ProtectedNonDeck>
+                  </ProtectedNonDeckStudy>
                 }
               />
             </Route>
