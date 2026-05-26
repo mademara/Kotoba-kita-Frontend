@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useParams } from 'react-router';
+import { Navigate } from 'react-router';
 import useQuestions from '../hooks/getStudy';
 import LoadingPage from '../pages/LoadingPage';
 const ProtectedNonDeckStudy = ({ children }) => {

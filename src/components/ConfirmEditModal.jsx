@@ -1,5 +1,4 @@
 import { useRef, useImperativeHandle, forwardRef, useState } from 'react';
-import { mockDecks } from '../mock/mockData';
 
 const ConfirmEditModal = forwardRef(function ConfirmEditModal(
   { onConfirm },
@@ -16,8 +15,10 @@ const ConfirmEditModal = forwardRef(function ConfirmEditModal(
     close: () => dialogRef.current?.close(),
   }));
 
-  const handleConfirm = () => {
-    onConfirm?.(target);
+  const handleConfirm = async () => {
+    if (onConfirm) {
+      await onConfirm?.(target);
+    }
     dialogRef.current?.close();
   };
 

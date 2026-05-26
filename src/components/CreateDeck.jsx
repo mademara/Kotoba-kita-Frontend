@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
-import { mockWords } from '../mock/mockData';
 import { useNavigate } from 'react-router';
+import useWords from '../hooks/getWords';
+import LoadingPage from '../pages/LoadingPage';
+import useCreateDeck from '../hooks/useCreateDeck';
 
 export default function CreateDeck() {
-  const [checkedWords, setCheckedWords] = useState([]);
-  const [deckTitle, setDeckTitle] = useState('');
-  const [deckDescription, setDeckDescription] = useState('');
+  const { data, loading, error, observerRef } = useWords();
+  const {
+    checkedWords,
+    setCheckedWords,
+    deckTitle,
+    setDeckTitle,
+    deckDescription,
+    setDeckDescription,
+    submitLoading,
+    submitError,
+    handleSubmit,
+  } = useCreateDeck();
+
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // logika simpan dan reset input
-    navigate('/decks');
-  };
   const handleCancel = (e) => {
     e.preventDefault();
-    //logika reset input
+    setCheckedWords([]);
+    setDeckTitle('');
+    setDeckDescription('');
     navigate('/decks');
   };
   const handleCheckboxChange = (event, id) => {
@@ -26,6 +35,17 @@ export default function CreateDeck() {
       setCheckedWords((prev) => prev.filter((item) => item !== id));
     }
   };
+  if (loading && data.length === 0) {
+    return <LoadingPage />;
+  }
+  if (error) {
+    return (
+      <>
+        <h2>{error}</h2>
+      </>
+    );
+  }
+
   return (
     <>
       <h2>Buat Deck {deckTitle}</h2>
@@ -33,25 +53,30 @@ export default function CreateDeck() {
         <label htmlFor="deck-title">Judul Deck</label>
         <input
           maxLength={30}
+          required
           value={deckTitle}
           onChange={(e) => {
             setDeckTitle(e.target.value);
           }}
+          disabled={submitLoading}
           type="text"
           id="deck-title"
         />
         <label htmlFor="deck-description">Deskripsi Deck</label>
         <textarea
           maxLength={200}
+          required
           value={deckDescription}
           onChange={(e) => setDeckDescription(e.target.value)}
           id="deck-description"
         ></textarea>
         <p>Total kata: {checkedWords.length}</p>
+        {!!submitError && <p style={{ color: '#fa5f51' }}>{submitError}</p>}
         <button
           onClick={(e) => handleSubmit(e)}
           className="deck-edit-submit-button"
           type="submit"
+          disabled={submitLoading}
         >
           Simpan
         </button>
@@ -59,6 +84,7 @@ export default function CreateDeck() {
           onClick={(e) => {
             handleCancel(e);
           }}
+          disabled={submitLoading}
           className="deck-cancel-edit"
           type="button"
         >
@@ -79,7 +105,7 @@ export default function CreateDeck() {
           </tr>
         </thead>
         <tbody>
-          {mockWords.map((w, i) => (
+          {data.map((w, i) => (
             <tr key={w.id}>
               <td>{i + 1}</td>
               <td>{w.kanji ? w.kanji : w.reading}</td>
@@ -93,10 +119,16 @@ export default function CreateDeck() {
                   }}
                   checked={checkedWords.includes(w.id)}
                   type="checkbox"
+                  disabled={submitLoading}
                 ></input>
               </td>
             </tr>
           ))}
+          <tr ref={observerRef}>
+            <td colSpan="6" style={{ textAlign: 'center', padding: '10px' }}>
+              {loading ? 'Memuat kata lainnya...' : 'Akhir dari daftar kata'}
+            </td>
+          </tr>
         </tbody>
       </table>
     </>

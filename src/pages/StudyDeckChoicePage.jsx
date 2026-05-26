@@ -30,7 +30,7 @@ export default function StudyDeckChoicePage() {
             <h2>{deck.title}</h2>
             <p>{deck.due_count} kata perlu diulas</p>
             <p>Total {deck.word_count} kata</p>
-            <p>{deck.description}</p>
+            <p className="description-overflow">{deck.description}</p>
             <div className="deck-choice-button-container">
               <button onClick={() => handleChoiceDeck(deck.id)}>
                 Pakai Deck ini!

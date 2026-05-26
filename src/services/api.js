@@ -24,8 +24,12 @@ export const getWords = (url = '/api/words/') =>
   axiosInstance.get(url).then((res) => res.data);
 
 // Decks
+
 export const getDecks = () =>
   axiosInstance.get('/api/decks/').then((res) => res.data);
+
+export const getDeckDetail = (id) =>
+  axiosInstance.get(`/api/decks/${id}/`).then((res) => res.data);
 
 export const createDeck = (payload) =>
   axiosInstance.post('/api/decks/', payload).then((res) => res.data);

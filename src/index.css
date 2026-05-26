@@ -906,6 +906,7 @@ button {
 .deck-choice-button-container {
   display: flex;
   justify-content: space-between;
+  margin-top: auto;
 }
 .deck-choice-format button {
   background-color: var(--deeper-white);
@@ -1059,7 +1060,7 @@ button {
   display: flex;
   justify-content: flex-end;
   gap: 2px;
-  margin-top: 1rem;
+  margin-top: auto;
 }
 .deck-list-buttons {
   background-color: var(--deeper-white);
@@ -1100,6 +1101,13 @@ button {
 }
 .deck-created-at {
   font-size: 0.8rem;
+}
+.description-overflow {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 /*deck detail page*/
 .deck-detail-page {
