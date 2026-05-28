@@ -1,17 +1,30 @@
 import React from 'react';
-import { mockWords } from '../mock/mockData';
-import { mockDecks } from '../mock/mockData';
 import { FooterLicense } from '../components/FooterLicense';
 import { useSearchParams } from 'react-router';
+import useWords from '../hooks/getWords';
 
 export function DictionaryPage() {
+  const { data, loading, error, observerRef } = useWords();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchTerm = searchParams.get('search') || '';
 
-  const searchedWords = mockWords.filter((word) =>
+  const searchedWords = data.filter((word) =>
     word.meaning.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
+  if (error) {
+    return <h2>{error}</h2>;
+  }
+  // [
+  //   {
+  //     "id": 2147483647,
+  //     "kanji": "string",
+  //     "reading": "string",
+  //     "romaji": "string",
+  //     "meaning": "string",
+  //     "pos": "string",
+  //     "decks": "string"
+  //   }
+  // ]
   return (
     <article className="dict-page">
       <header className="deck-list-page-header">
@@ -22,7 +35,7 @@ export function DictionaryPage() {
           value={searchTerm}
           onChange={(e) => setSearchParams({ search: e.target.value })}
           type="search"
-          placeholder="Cari deck di sini..."
+          placeholder="Cari Kata di sini..."
         />
       </header>
       <section className="dict-page-words-list">
@@ -43,16 +56,19 @@ export function DictionaryPage() {
                   <h3>{word.meaning}</h3>
                 </div>
                 <p>kata ini tersedia pada deck:</p>
-                {mockDecks
-                  .filter((deck) => deck.words.includes(word.id))
-                  .map((deck) => (
-                    <p key={deck.id}>{deck.title}</p>
-                  ))}
+                {word.decks.map((deck) => (
+                  <p key={deck.id}>{deck.title}</p>
+                ))}
               </div>
             </div>
           </div>
         ))}
       </section>
+      <div ref={observerRef}>
+        <div colSpan="6" style={{ textAlign: 'center', padding: '10px' }}>
+          {loading ? 'Memuat kata lainnya...' : 'Akhir dari daftar kata'}
+        </div>
+      </div>
       <FooterLicense />
     </article>
   );
