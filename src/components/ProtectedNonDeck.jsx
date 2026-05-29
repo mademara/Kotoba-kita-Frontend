@@ -1,17 +1,28 @@
 import React from 'react';
-import { Navigate, useParams } from 'react-router';
-import { mockDecks } from '../mock/mockData';
+import { Navigate } from 'react-router';
+import useDetailDeck from '../hooks/getDetailDeck';
+import LoadingPage from '../pages/LoadingPage';
 
 const ProtectedNonDeck = ({ children }) => {
-  // implementasi auth nanti
-  const params = useParams();
-  const deck = mockDecks.find((deck) => deck.id === Number(params.deckId));
+  const { data, deckWords, loading, error } = useDetailDeck();
 
-  if (!deck) {
+  if (loading) {
+    return <LoadingPage />;
+  }
+  if (
+    error === 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.'
+  ) {
+    return (
+      <article>
+        <h2>{error}</h2>
+      </article>
+    );
+  }
+  if (error) {
     return <Navigate to="/404" replace />;
   }
 
-  return React.cloneElement(children, { deck });
+  return React.cloneElement(children, { data, deckWords });
 };
 
 export default ProtectedNonDeck;

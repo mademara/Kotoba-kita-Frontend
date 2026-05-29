@@ -1,26 +1,50 @@
 import React, { useRef, useState } from 'react';
-import { mockWords } from '../mock/mockData';
 import { useNavigate } from 'react-router';
 import ConfirmEditModal from './ConfirmEditModal';
+import useWords from '../hooks/getWords';
+import { updateDeck } from '../services/api';
 
-export default function EditDeck({ currentDeck = {} }) {
-  const [checkedWords, setCheckedWords] = useState(() => {
-    return currentDeck ? currentDeck.words : [];
-  });
+export default function EditDeck({ currentDeck = {}, wordList = [] }) {
+  const [checkedWords, setCheckedWords] = useState(
+    wordList?.map((w) => w.id) || []
+  );
+  const { data, loading, error, observerRef } = useWords();
   const modalRef = useRef();
   const [deckTitle, setDeckTitle] = useState(currentDeck.title);
   const [deckDescription, setDeckDescription] = useState(
     currentDeck.description
   );
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState(null);
+
   const navigate = useNavigate();
 
   const handleConfirmEdit = (e) => {
     e.preventDefault();
     modalRef.current.open(currentDeck);
   };
-  const handleSubmit = (currDeck) => {
-    // logika simpan dan reset input
-    navigate('/decks');
+  const handleSubmit = async (currDeck) => {
+    setEditLoading(true);
+    setEditError(null);
+    try {
+      const payload = {
+        title: deckTitle,
+        description: deckDescription,
+        word_ids: checkedWords,
+      };
+      await updateDeck(currDeck.id, payload);
+      await navigate('/decks');
+    } catch (error) {
+      if (error.request) {
+        setEditError(
+          'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.'
+        );
+      } else {
+        setEditError(`Terjadi kesalahan sistem: ${error.message}`);
+      }
+    } finally {
+      setEditLoading(false);
+    }
   };
   const handleCancel = (e) => {
     e.preventDefault();
@@ -36,6 +60,9 @@ export default function EditDeck({ currentDeck = {} }) {
       setCheckedWords((prev) => prev.filter((item) => item !== id));
     }
   };
+  if (error) {
+    return <h2>{error}</h2>;
+  }
 
   return (
     <>
@@ -59,10 +86,12 @@ export default function EditDeck({ currentDeck = {} }) {
           id="deck-description"
         ></textarea>
         <p>Total kata: {checkedWords.length}</p>
+        {!!editError && <p style={{ color: '#fa5f51' }}>{editError}</p>}
         <button
           onClick={(e) => handleConfirmEdit(e)}
           className="deck-edit-submit-button"
           type="submit"
+          disabled={editLoading}
         >
           Simpan
         </button>
@@ -72,6 +101,7 @@ export default function EditDeck({ currentDeck = {} }) {
           }}
           className="deck-cancel-edit"
           type="button"
+          disabled={editLoading}
         >
           Batal
         </button>
@@ -89,7 +119,7 @@ export default function EditDeck({ currentDeck = {} }) {
           </tr>
         </thead>
         <tbody>
-          {mockWords.map((w, i) => (
+          {data.map((w, i) => (
             <tr key={w.id}>
               <td>{i + 1}</td>
               <td>{w.kanji ? w.kanji : w.reading}</td>
@@ -103,10 +133,16 @@ export default function EditDeck({ currentDeck = {} }) {
                   }}
                   checked={checkedWords.includes(w.id)}
                   type="checkbox"
+                  disabled={editLoading}
                 ></input>
               </td>
             </tr>
           ))}
+          <tr ref={observerRef}>
+            <td colSpan="6" style={{ textAlign: 'center', padding: '10px' }}>
+              {loading ? 'Memuat kata lainnya...' : 'Akhir dari daftar kata'}
+            </td>
+          </tr>
         </tbody>
       </table>
       <ConfirmEditModal ref={modalRef} onConfirm={handleSubmit} />

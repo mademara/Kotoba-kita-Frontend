@@ -1,5 +1,4 @@
 import { FooterLicense } from '../components/FooterLicense';
-import { mockFlashcardSession } from '../mock/mockData';
 import { useLocation, Navigate } from 'react-router';
 
 export default function StudyResultPage() {
@@ -9,6 +8,42 @@ export default function StudyResultPage() {
     return (
       <article className="result-page">
         <h2>Mantap Kamu berhasil menyelesaikan sesi kali ini!</h2>
+        <section className="result-summary">
+          <div>
+            <p>Lupa</p>
+            <p>
+              {summary.filter((session) => session.rating === 'lupa').length}{' '}
+              Kata
+            </p>
+          </div>
+          <div>
+            <p>Ingat</p>
+            <p>
+              {summary.filter((session) => session.rating === 'ingat').length}{' '}
+              Kata
+            </p>
+          </div>
+          <div>
+            <p>Cukup ingat</p>
+            <p>
+              {
+                summary.filter((session) => session.rating === 'cukup ingat')
+                  .length
+              }{' '}
+              Kata
+            </p>
+          </div>
+          <div>
+            <p>Kesulitan</p>
+            <p>
+              {
+                summary.filter((session) => session.rating === 'kesulitan')
+                  .length
+              }{' '}
+              Kata
+            </p>
+          </div>
+        </section>
         <section className="result-page-container">
           {summary.map((session) => {
             let bg = '';

@@ -1,19 +1,26 @@
 import React from 'react';
 import { FooterLicense } from '../components/FooterLicense';
-import { useParams, Navigate } from 'react-router';
-import { mockDecks } from '../mock/mockData';
+import { Navigate } from 'react-router';
+
 import EditDeck from '../components/EditDeck';
+import useDetailDeck from '../hooks/getDetailDeck';
+import LoadingPage from './LoadingPage';
 
 export default function DeckEditPage() {
-  const { deckId } = useParams();
-  const currentDeck = mockDecks.find((deck) => deck.id === Number(deckId));
+  const { data, deckWords, loading, error } = useDetailDeck();
 
-  if (!currentDeck || currentDeck.isDefault) {
+  if (loading) {
+    return <LoadingPage />;
+  }
+  if (error) {
+    return <h2>{error}</h2>;
+  }
+  if (!data || data.isDefault) {
     return <Navigate to="/404" replace />;
   } else {
     return (
       <article className="deck-edit-page">
-        <EditDeck currentDeck={currentDeck} />
+        <EditDeck currentDeck={data} wordList={deckWords} />
         <FooterLicense />
       </article>
     );

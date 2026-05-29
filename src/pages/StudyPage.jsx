@@ -1,107 +1,94 @@
-import React, { useEffect, useState } from 'react';
-import { FooterLicense } from '../components/FooterLicense';
-import { mockFlashcardSession } from '../mock/mockData';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
+import { FooterLicense } from '../components/FooterLicense';
+import { useAnswerSubmit } from '../hooks/useAnswerSubmit';
 
-export function StudyPage() {
-  const [answer, setAnswer] = useState('');
-  const [currentCardEnum, setCurrentCardEmun] = useState(0);
+export function StudyPage({
+  questions,
+  freeDrill,
+  totalQuestions,
+  questionsDeckTitle,
+}) {
+  const [currentCardEnum, setCurrentCardEnum] = useState(0);
+  const [answerReady, setAnswerReady] = useState(false);
   const [timer, setTimer] = useState(20);
   const [isTimerActive, setIsTimerActive] = useState(true);
-  const currentCard = mockFlashcardSession.words[currentCardEnum];
-  const [rating, setRating] = useState('');
-  const [answerReady, setAnswerReady] = useState(false);
   const [summary, setSummary] = useState([]);
-  const [devComment, setDevComment] = useState('Apa arti dari kanji/kana ini?');
+
   const navigate = useNavigate();
+  const currentCard = questions[currentCardEnum];
 
-  const handleAnswer = (ansId, ans) => {
-    if (answerReady) return;
-    setIsTimerActive(false);
-    const answeringTime = 20 - timer;
-    setAnswer(ans);
-    if (ansId === currentCard.id && answeringTime < 20) {
-      if (answeringTime <= 5) {
-        setRating('ingat');
-        setDevComment('Mantap, kamu hafal kata ini dengan baik.');
-      } else if (answeringTime <= 10) {
-        setRating('cukup ingat');
-        setDevComment(
-          'Bagus, menurutku beberapa sesi lagi akan membuatmu hafal dengan kata ini.'
-        );
-      } else if (answeringTime < 20) {
-        setRating('kesulitan');
-        setDevComment(
-          'Sepertinya kamu hampir lupa kata ini, aku akan menjadwalkannya lebih sering.'
-        );
-      }
-    } else if (answeringTime === 20 || ansId !== currentCard.id) {
-      setRating('lupa');
-      setDevComment(
-        'Jangan patah semangat, aku akan membantumu menghafal kata ini, akan kujadwalkan dalam waktu dekat.'
-      );
-    }
-    setAnswerReady(true);
-  };
-  const handleNextCard = () => {
-    const currentCardSummary = {
-      id: currentCard.id,
-      kanji: currentCard.kanji ? currentCard.kanji : currentCard.reading,
-      reading: currentCard.reading,
-      romaji: currentCard.romaji,
-      meaning: currentCard.choices.find(
-        (choice) => choice.wordId === currentCard.id
-      ).meaning,
-      rating: rating,
-    };
-    setDevComment('Apa arti dari kanji/kana ini?');
-    const updatedSummary = [...summary, currentCardSummary];
+  const stopTimer = useCallback(() => setIsTimerActive(false), []);
 
-    if (currentCardEnum === mockFlashcardSession.words.length - 1) {
-      setSummary(updatedSummary);
-      setAnswerReady(false);
-      setAnswer('');
-      setRating('');
+  const onSuccess = useCallback(() => setAnswerReady(true), []);
 
-      navigate('/study/result', { state: updatedSummary });
-    } else {
-      setSummary(updatedSummary);
-      setAnswerReady(false);
-      setAnswer('');
-      setRating('');
-      setCurrentCardEmun((prev) => prev + 1);
-      setTimer(20);
-      setIsTimerActive(true);
-    }
-  };
-  if (timer <= 0 && answerReady === false) {
-    handleAnswer(0, 'Unanswered');
-  }
+  const {
+    loading,
+    answer,
+    rating,
+    comment,
+    pendingAnswer,
+    handleAnswer,
+    reset,
+  } = useAnswerSubmit({ currentCard, timer, freeDrill, stopTimer, onSuccess });
+
   useEffect(() => {
     if (!isTimerActive || timer <= 0 || answerReady) return;
 
-    const intervalId = setInterval(() => {
-      setTimer((prevWaktu) => {
-        if (prevWaktu <= 1) {
+    const id = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
           setIsTimerActive(false);
           return 0;
         }
-        return prevWaktu - 1;
+        return prev - 1;
       });
     }, 1000);
 
-    return () => clearInterval(intervalId);
+    return () => clearInterval(id);
   }, [isTimerActive, timer, answerReady]);
+
+  useEffect(() => {
+    if (timer <= 0 && !answerReady) {
+      handleAnswer(0, 'Unanswered');
+    }
+  }, [timer, answerReady, handleAnswer]);
+
+  const handleNextCard = () => {
+    const currentCardSummary = {
+      id: currentCard.id,
+      kanji: currentCard.kanji ?? currentCard.reading,
+      reading: currentCard.reading,
+      romaji: currentCard.romaji,
+      meaning: currentCard.choices.find((c) => c.word_id === currentCard.id)
+        .meaning,
+      rating,
+    };
+
+    const updatedSummary = [...summary, currentCardSummary];
+
+    if (currentCardEnum === totalQuestions - 1) {
+      navigate('/study/result', { state: updatedSummary });
+      return;
+    }
+
+    setSummary(updatedSummary);
+    setCurrentCardEnum((prev) => prev + 1);
+    setAnswerReady(false);
+    setTimer(20);
+    setIsTimerActive(true);
+    reset();
+  };
 
   return (
     <article className="study-page">
       <section className="study-page-progress">
-        <h3>Progres kemanjuan sesi</h3>
+        <h3>Progres kemajuan sesi</h3>
         <div className="study-page-progress-bar">
-          {[...Array(mockFlashcardSession.total)].map((curr, index) => (
+          {[...Array(totalQuestions)].map((_, index) => (
             <div
-              className="study-page-bar"
               key={index}
+              className="study-page-bar"
               style={{
                 backgroundColor:
                   index < currentCardEnum
@@ -118,14 +105,19 @@ export function StudyPage() {
           ))}
         </div>
       </section>
+
       <section className="study-page-container">
         <div className="study-page-question">
-          <h2>{devComment}</h2>
+          <p>Deck: {questionsDeckTitle}</p>
+          <p>Mode: {freeDrill ? 'Free Drill' : 'Sesi Belajar'}</p>
+          <h2>{comment}</h2>
         </div>
+
         <div className="study-page-timer">
           <h2>Sisa waktu</h2>
           <div>{timer} Detik</div>
         </div>
+
         <div
           className={answerReady ? 'flashcard flashcard-answered' : 'flashcard'}
         >
@@ -136,32 +128,33 @@ export function StudyPage() {
                 : 'flashcard-inner'
             }
           >
-            {answerReady ? (
+            {answerReady && (
               <div className="study-page-flashcard-back">
                 <h2 className="kanji-meanings">
                   {
                     currentCard.choices.find(
-                      (ch) => ch.wordId === currentCard.id
+                      (ch) => ch.word_id === currentCard.id
                     ).meaning
                   }
                 </h2>
                 <h2 className="flashcard-current-rating">rating: {rating}</h2>
               </div>
-            ) : null}
+            )}
             <div className="study-page-flashcard">
               <h2 className="kanji-question">
-                {currentCard.kanji ? currentCard.kanji : currentCard.reading}
+                {currentCard.kanji ?? currentCard.reading}
               </h2>
               <h2 className="kana-question">{currentCard.reading}</h2>
               <h2 className="romanji-question">{currentCard.romaji}</h2>
             </div>
           </div>
         </div>
+
         <ul className="study-page-answer-choice">
           {currentCard.choices.map((choice) => {
             let buttonStyle = {};
             if (answerReady) {
-              if (choice.wordId === currentCard.id) {
+              if (choice.word_id === currentCard.id) {
                 buttonStyle = {
                   backgroundColor: '#28a745',
                   color: '#fff',
@@ -170,7 +163,7 @@ export function StudyPage() {
                 };
               } else if (
                 choice.meaning === answer &&
-                choice.wordId !== currentCard.id
+                choice.word_id !== currentCard.id
               ) {
                 buttonStyle = {
                   backgroundColor: '#dc3545',
@@ -186,29 +179,39 @@ export function StudyPage() {
                 };
               }
             }
+
             return (
-              <li key={choice.wordId}>
+              <li key={choice.word_id}>
                 <button
-                  style={{ ...buttonStyle }}
-                  disabled={answerReady}
+                  style={buttonStyle}
+                  disabled={loading || !!pendingAnswer}
                   className="study-page-choice-button"
-                  onClick={() => handleAnswer(choice.wordId, choice.meaning)}
+                  onClick={() => handleAnswer(choice.word_id, choice.meaning)}
                 >
                   {choice.meaning}
                 </button>
               </li>
             );
           })}
+
           {answerReady ? (
             <button onClick={handleNextCard} className="next-sessions-button">
-              {currentCardEnum === mockFlashcardSession.words.length - 1
+              {currentCardEnum === totalQuestions - 1
                 ? 'Lihat Rincian Sesi →'
                 : 'Soal selanjutnya →'}
+            </button>
+          ) : pendingAnswer && !answerReady ? (
+            <button
+              onClick={() =>
+                handleAnswer(pendingAnswer.ansId, pendingAnswer.ans)
+              }
+              className="next-sessions-button"
+            >
+              Coba lagi ↺
             </button>
           ) : null}
         </ul>
       </section>
-
       <FooterLicense />
     </article>
   );

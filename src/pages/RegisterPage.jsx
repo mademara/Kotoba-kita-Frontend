@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AuthPageJumbotron } from '../components/AuthPageJumbotron';
 import { Link, useNavigate } from 'react-router';
+import { useAuth } from '../contexts/AuthContext';
 
 export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -10,6 +11,7 @@ export function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { register } = useAuth();
 
   const navigate = useNavigate();
 
@@ -41,29 +43,25 @@ export function RegisterPage() {
     setIsLoading(true);
 
     try {
-      //logic register nanti tak kasih disini
-      const response = await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            message: 'User berhasil didaftarkan',
-            user: {
-              username: 'string',
-              email: 'string',
-            },
-          });
-        }, 5000);
-      });
-
+      const user = await register(username, email, password);
       setUsername('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-
-      navigate('/login', {
-        state: { message: 'Akun berhasil dibuat, silakan login!' },
-      });
+      if (user) {
+        navigate('/login', {
+          state: {
+            message: 'Akun berhasil dibuat, silakan login!',
+            email: user.email,
+          },
+        });
+      } else {
+        navigate('/login', {
+          state: { message: 'Akun berhasil dibuat, silakan login!' },
+        });
+      }
     } catch (error) {
-      setErrorMessage('Terjadi kesalahan');
+      setErrorMessage(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -80,6 +78,8 @@ export function RegisterPage() {
         <form onSubmit={handleRegister} className="auth-page-form">
           <label htmlFor="username-input">Nama Pengguna</label>
           <input
+            autoComplete="username"
+            maxLength={20}
             disabled={isLoading}
             required
             value={username}
@@ -92,6 +92,7 @@ export function RegisterPage() {
           />
           <label htmlFor="email-input">Email</label>
           <input
+            autoComplete="email"
             disabled={isLoading}
             required
             value={email}
@@ -116,6 +117,7 @@ export function RegisterPage() {
             </button>
           </div>
           <input
+            autoComplete="new-password"
             disabled={isLoading}
             required
             value={password}
@@ -128,6 +130,7 @@ export function RegisterPage() {
           />
           <label htmlFor="confirm-password-input">Konfirmasi Kata Sandi</label>
           <input
+            autoComplete="new-password"
             disabled={isLoading}
             required
             value={confirmPassword}
